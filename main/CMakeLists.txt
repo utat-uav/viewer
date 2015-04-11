@@ -1,9 +1,9 @@
-add_executable(utxViewer gcsmain.cpp)
-install (TARGETS utxViewer DESTINATION /Users/davidkoo/uav/viewer)
+add_executable(gcsViewer gcsmain.cpp imgutils.cpp)
+install (TARGETS gcsViewer DESTINATION /usr/local/bin)
 
 include_directories( ../imgsrc/)
 
 #Linked Libraries
-target_link_libraries(utxViewer imagestream)
-target_link_libraries(utxViewer ${OpenCV_LIBS})
+target_link_libraries(gcsViewer imagestream)
+target_link_libraries(gcsViewer ${OpenCV_LIBS})
 

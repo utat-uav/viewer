@@ -5,17 +5,13 @@
 #include <sstream>
 #include <iomanip>
 
-#include <csignal>
 #include <thread>
 #include <opencv2/opencv.hpp>
 
 //Libraries
 #include "filesource.h"
-#include "imagepacket.h"
+#include "imgutils.h"
 
-#define MAX_WAIT_TIME 5000
-
-uavimage impacket;
 
 void makeTarget(int event, int x, int y, int, void*){
 	if( event != cv::EVENT_LBUTTONDOWN )      return;
@@ -24,39 +20,42 @@ void makeTarget(int event, int x, int y, int, void*){
 }
 
 int main(){
-	cv::Mat jpg, image;
+	cv::Mat jpg, image, prvw;
 	char option;
 	bool image_ok;
 	int button;
+	double latitude, longitude, altitude, heading;
 	std::vector<unsigned char> buffer;
 	ImageSource* src;
 
-	std::cout<<"Open from files [1], or stream [2]" <<std::endl;
-	std::cin >> option;
-
+	std::cout<<"Opening files from the saved directory"<<std::endl;
 
 	cv::namedWindow("main", cv::WINDOW_AUTOSIZE);
 
-	if(option=='1'){
-		src = new FileSource();	
-		cv::setMouseCallback("main",makeTarget,0);
-	}
-	else
-		src = new FileSource();
-	//
+	src = new FileSource();	
+	cv::setMouseCallback("main",makeTarget,0);
  	
-	image_ok = src->getImage(buffer);		
+	image_ok = src->getImage(buffer, latitude, longitude, altitude, heading );		
+
 	while(image_ok){
+		std::cout<<"Latitude: "<<latitude<< "  Longitude: "<< longitude;
+		std::cout<<"  Altitude"<<altitude<<"  Heading"<<heading<<std::endl;
 		jpg = cv::Mat(buffer);
 		image = cv::imdecode(jpg,1);
+		groundvision::whiteBalance(image);		
+
+		//cv::resize(image,prvw,cv::Size(),0.25,0.25,cv::INTER_NEAREST);
+		//cv::imshow("main",prvew);
+		
 		cv::imshow("main", image);
 	
-		button = cv::waitKey(MAX_WAIT_TIME);
-		if(button == 'q' && option != '1' ) {
+		button = cv::waitKey(0);
+		if(button == 'q') {
 			std::cout<<"Remember image"<<std::endl;
 		}	
 	
-		image_ok = src->getImage(buffer);
-	}		
+		image_ok = src->getImage(buffer,latitude, longitude, altitude, heading);
+	}
+	std::cout<<"Done getting Images"<<std::endl;	
 	return 0;
 }

@@ -2,28 +2,40 @@
 
 
 FileSource::FileSource(){
-	i = 0; 
-	n = 5;
+	filelog.open("uav/transfer/uav_gps.log", std::ifstream::in);
+	std::string header;
+	std::getline(filelog,header);
 }
 
-FileSource::FileSource(int num){
-	i = 0;
-	n = num;
-}
+FileSource::~FileSource(){
+	filelog.close();
+}	
 
-FileSource::~FileSource(){}	
-		
-bool FileSource::getImage(std::vector<unsigned char> &imgdata){
-	if (i==n)
-		return false;
-	
-	std::ifstream ifs;
+bool FileSource::getImage(std::vector<unsigned char> &imgdata, double &lat, double &lon, double &alt, double &hed){
 	std::stringstream ss;
-	ss<<PREFIX;
-	ss<<std::setfill('0')<<std::setw(4)<<++i;
-	ss<<".jpg";
-	std::string filename = ss.str();
-	ifs.open(filename, std::ifstream::binary);
+	ss<<"uav/transfer/";
+
+	//Read line from uav_gps.log
+	std::string imgname, val;	
+	if(std::getline(filelog,imgname,',')){
+		std::getline(filelog,val,',');
+		lat = std::stod(val);
+		std::getline(filelog,val,',');
+		lon = std::stod(val);
+		std::getline(filelog,val,',');
+		alt = std::stod(val);
+		std::getline(filelog,val);
+		hed = std::stod(val);
+	}
+	else{
+		std::cout<<"End of log!"<<std::endl;
+		return false;
+	}
+
+	std::ifstream ifs;
+	ss<<imgname;
+	std::string filepath = ss.str();
+	ifs.open(filepath, std::ifstream::binary);
 
 	if(ifs) {
 		ifs.seekg(0,ifs.end);
@@ -35,7 +47,9 @@ bool FileSource::getImage(std::vector<unsigned char> &imgdata){
 		ifs.close();
 		return true;
 	}
-
-	return false;
-}
+	else{
+		std::cout<<"Error opening image "<<filepath<<std::endl;
+		return false;
+	}
+}	
 	

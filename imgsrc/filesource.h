@@ -1,23 +1,17 @@
 #include "imgsource.h"
-#include <iomanip>
+#include <string>
+#include <iostream>
+#include <fstream>
 
-#define TEST
-
-#ifdef TEST
-#define PREFIX "test/prv"
-#else
-#define PREFIX "transfer/img"
-#endif
+#define PREFIX "uav/transfer/im"
 
 class FileSource: public ImageSource {
 
 	public: 
 		FileSource();
-		FileSource(int num);
 		~FileSource();	
 		
-		bool getImage(std::vector<unsigned char> &data);
-	
+		bool getImage(std::vector<unsigned char> &data, double &lat, double &lon, double &alt, double &hed);
 	private:
-		int i, n;
+		std::ifstream filelog;
 };

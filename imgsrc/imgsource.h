@@ -9,8 +9,7 @@ class ImageSource {
 	public: 
 		ImageSource(){}
 		virtual ~ImageSource(){}
-		
-		virtual bool getImage(std::vector<unsigned char> &data) = 0;
-		
+	
+		virtual bool getImage(std::vector<unsigned char> &data, double &lat, double &lon, double &alt, double &hd) = 0;
 		int height, width;		
 };
