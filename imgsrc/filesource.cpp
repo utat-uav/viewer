@@ -36,7 +36,8 @@ bool FileSource::getImage(std::vector<unsigned char> &imgdata, double &lat, doub
 	ss<<imgname;
 	std::string filepath = ss.str();
 	ifs.open(filepath, std::ifstream::binary);
-
+	std::cout<<"Opening image " << imgname << '\n';
+	std::cout<<"Latitude: " << lat << ", Longitude: " << lon << ",  Altitude: " << alt << ", Heading: " <<hed << std::endl;
 	if(ifs) {
 		ifs.seekg(0,ifs.end);
 		std::streampos size = ifs.tellg();
