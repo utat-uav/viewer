@@ -6,4 +6,5 @@ include_directories( ../imgsrc/)
 #Linked Libraries
 target_link_libraries(gcsViewer imagestream)
 target_link_libraries(gcsViewer ${OpenCV_LIBS})
+target_link_libraries(gcsViewer ${zbar_LIBRARY})
 
