@@ -127,7 +127,6 @@ namespace groundvision{
 		scanner.scan(im);
 
 		for(zbar::Image::SymbolIterator symbol = im.symbol_begin(); symbol!=im.symbol_end(); ++symbol){
-
 			std::cout<<symbol->get_data()<<std::endl;
 		}
 	}

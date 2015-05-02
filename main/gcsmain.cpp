@@ -23,7 +23,7 @@
 #define NONE 0
 #define TARGET_PICK 1
 #define AREA_SELECT 2
-#define SIZE_FACTOR 0.25
+#define SIZE_FACTOR 1//0.25
 
 int mode = 0;
 bool box = false;
