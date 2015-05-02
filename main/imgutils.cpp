@@ -65,7 +65,10 @@ namespace groundvision{
 		double xd, yd, d;
 		double pi = acos(-1);
 		double R = 6371000;
-		
+		double lat, lon;
+	  	lat = imlat*pi/180;
+		lon = imlon*pi/180;
+
 		alphax = 2*atan2(SENS_WIDTH,2*FOCAL_LENGTH);
 		alphay = 2*atan2(SENS_HEIGHT,2*FOCAL_LENGTH);
 		fovwidth = 2*altitude*tan(alphax/2);
@@ -80,10 +83,12 @@ namespace groundvision{
 		if (xd>=0) beta = pi-beta;
 		else beta = -pi-beta;
 
-		theta = beta-heading;
+		theta = beta-heading*pi/180;
 		d = sqrt(pow(xd,2) + pow(yd,2));
-		targlat = asin( sin(imlat)*cos(d/R) + cos(imlat)*sin(d/R)*cos(theta));
-		targlon = (imlon + atan2(sin(theta)*sin(d/R)*cos(imlat), cos(d/R)-sin(imlat)*sin(targlat)));
+		targlat = asin( sin(lat)*cos(d/R) + cos(lat)*sin(d/R)*cos(theta));
+		targlon = (lon + atan2(sin(theta)*sin(d/R)*cos(lat), cos(d/R)-sin(lat)*sin(targlat)));
+		targlat = targlat*180/pi;
+		targlon = targlon*180/pi;
 
 
 	}	

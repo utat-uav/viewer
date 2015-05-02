@@ -3,8 +3,8 @@
 #include <opencv2/opencv.hpp>
 #include <zbar.h>
 
-#define SENS_WIDTH 3.6 
-#define SENS_HEIGHT 2.7
+#define SENS_WIDTH 3.6
+#define SENS_HEIGHT 2.7	
 #define FOCAL_LENGTH 4.4
 
 namespace groundvision{	

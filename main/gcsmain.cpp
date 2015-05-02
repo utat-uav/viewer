@@ -109,7 +109,7 @@ int main(){
 	while(image_ok){
 		jpg = cv::Mat(buffer);
 		image = cv::imdecode(jpg,1);
-		groundvision::whiteBalance(image);		
+		//groundvision::whiteBalance(image);		
 
 		cv::resize(image,preview,cv::Size(),SIZE_FACTOR,SIZE_FACTOR,cv::INTER_NEAREST);
 		cv::imshow("Main",preview);
