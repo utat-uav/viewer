@@ -2,7 +2,7 @@
 
 
 FileSource::FileSource(){
-	filelog.open("uav/transfer/uav_gps.log", std::ifstream::in);
+	filelog.open("uav_gps.log", std::ifstream::in);
 	std::string header;
 	std::getline(filelog,header);
 }
@@ -11,21 +11,19 @@ FileSource::~FileSource(){
 	filelog.close();
 }	
 
-bool FileSource::getImage(std::vector<unsigned char> &imgdata, double &lat, double &lon, double &alt, double &hed){
-	std::stringstream ss;
-	ss<<"uav/transfer/";
-
+bool FileSource::getImage(std::vector<unsigned char> &imgdata, struct gpsinfo &imgps){
 	//Read line from uav_gps.log
 	std::string imgname, val;	
 	if(std::getline(filelog,imgname,',')){
 		std::getline(filelog,val,',');
-		lat = std::stod(val);
+		imgps.latitude = std::stod(val);
 		std::getline(filelog,val,',');
-		lon = std::stod(val);
+		imgps.longitude = std::stod(val);
 		std::getline(filelog,val,',');
-		alt = std::stod(val);
-		std::getline(filelog,val);
-		hed = std::stod(val);
+		imgps.altitude = std::stod(val);
+		std::getline(filelog,val,',');
+		imgps.heading = std::stod(val);
+		std::getline(filelog,imgps.timestamp);
 	}
 	else{
 		std::cout<<"End of log!"<<std::endl;
@@ -33,11 +31,8 @@ bool FileSource::getImage(std::vector<unsigned char> &imgdata, double &lat, doub
 	}
 
 	std::ifstream ifs;
-	ss<<imgname;
-	std::string filepath = ss.str();
-	ifs.open(filepath, std::ifstream::binary);
+	ifs.open(imgname, std::ifstream::binary);
 	std::cout<<"Opening image " << imgname << '\n';
-	std::cout<<"Latitude: " << lat << ", Longitude: " << lon << ",  Altitude: " << alt << ", Heading: " <<hed << std::endl;
 	if(ifs) {
 		ifs.seekg(0,ifs.end);
 		std::streampos size = ifs.tellg();
@@ -49,7 +44,7 @@ bool FileSource::getImage(std::vector<unsigned char> &imgdata, double &lat, doub
 		return true;
 	}
 	else{
-		std::cout<<"Error opening image "<<filepath<<std::endl;
+		std::cout<<"Error opening image "<<imgname<<std::endl;
 		return false;
 	}
 }	

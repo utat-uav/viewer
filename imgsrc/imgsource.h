@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <sstream>
+#include "gpsinfo.h"
 
 class ImageSource {
 
@@ -10,6 +10,6 @@ class ImageSource {
 		ImageSource(){}
 		virtual ~ImageSource(){}
 	
-		virtual bool getImage(std::vector<unsigned char> &data, double &lat, double &lon, double &alt, double &hd) = 0;
+		virtual bool getImage(std::vector<unsigned char> &data, struct gpsinfo &imgps) = 0;
 		int height, width;		
 };

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#define PREFIX "uav/transfer/im"
+#define PREFIX "im"
 
 class FileSource: public ImageSource {
 
@@ -11,7 +11,7 @@ class FileSource: public ImageSource {
 		FileSource();
 		~FileSource();	
 		
-		bool getImage(std::vector<unsigned char> &data, double &lat, double &lon, double &alt, double &hed);
+		bool getImage(std::vector<unsigned char> &data, struct gpsinfo &pos);
 	private:
 		std::ifstream filelog;
 };
