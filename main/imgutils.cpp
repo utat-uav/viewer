@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include "imgutils.h"
 
-namespace groundvision{
+amespace groundvision{
 	cv::Mat channels[3];
 
 	void whiteBalance(cv::Mat& img){
