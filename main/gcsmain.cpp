@@ -18,11 +18,37 @@
 #define SIZE_FACTOR 0.5
 
 int mode = 0;
+int n = 0;
 bool box = false;
 cv::Point pnt;
 cv::Mat image, preview, draw;
 std::vector<cv::Point> pointlist;
+std::ofstream targetlog;
 struct gpsinfo imgps;
+
+void logTarget(std::string file, double latitude, double longitude){	
+	int deg, min;
+	double sec, lon;
+	targetlog<<std::setfill('0')<<std::setw(2)<<n;
+	targetlog<<"\tSTD\tN";
+	deg = (int) floor(latitude);
+	min = (int) (60*(latitude - deg));
+	sec = 3600*(latitude-floor(latitude)-(double)min/60);
+	targetlog<<deg<<" " <<min<< " ";
+	targetlog.precision(3);
+	targetlog<<sec<<"\tW";
+
+	lon = std::abs(longitude);
+	deg = (int) floor(lon);
+	min = (int)(60*(lon-deg));
+	sec = 3600*(lon-floor(lon) - (double)min/60);
+	targetlog.precision(2);	
+	targetlog<<deg<<" " <<min<< " ";
+	targetlog.precision(3);
+	targetlog<<sec << "\t";
+
+	targetlog<<file<<std::endl;
+}
 
 void windowClick(int event, int x, int y, int, void*){
 	int xc, yc;
@@ -51,30 +77,11 @@ void windowClick(int event, int x, int y, int, void*){
 			yc = (int)((topleft.y+bottomright.y)/2);
 			//groundvision::geolocate();
 			std::cout<<"Target located at: "<<std::fixed<<imgps.latitude << ", " <<imgps.longitude<<std::endl;
-			groundvision::makeTarget(image,topleft,bottomright);
+			std::string imagename = groundvision::makeTarget(image,topleft,bottomright,n);
+			logTarget(imagename,imgps.latitude,imgps.longitude);
 			cv::imshow("Main",preview);
 		}
-	} /*else if (mode == AREA_SELECT){
-		if( event ==cv::EVENT_LBUTTONDOWN){
-			cv::Point mapped = groundvision::map(tmp, SIZE_FACTOR);
-
-			if(pointlist.size()==0)
-				draw = preview.clone();
-
-			cv::circle(draw,tmp, 3, cv::Scalar(0,0,0), -1);
-			cv::imshow("Main",draw);
-			pointlist.push_back(mapped);
-		}
-		else if (event == cv::EVENT_RBUTTONDOWN){
-			double area = groundvision::calculateArea();
-			groundvision::centroid(pointlist,xc,yc);
-			groundvision::geolocate();
-			std::cout<<"Area: " << area << " located at: "<<std::endl;	
-			cv::imshow("Main",preview);
-			pointlist.clear();
-		}
-	
-	}*/
+	} 
 	else
 		return;
 }
@@ -90,6 +97,9 @@ int main(){
 	std::cout.precision(9);
 	std::cout<<"Opening files from the saved directory"<<std::endl;
 
+	targetlog.open("UTAT.txt",std::ofstream::app);
+	targetlog<< std::fixed;
+
 	cv::namedWindow("Main", cv::WINDOW_AUTOSIZE);
 	cv::moveWindow("Main",0,0);
 
@@ -97,11 +107,11 @@ int main(){
 	cv::setMouseCallback("Main",windowClick,0);
  	
 	image_ok = src->getImage(buffer, imgps);
-
+	
 	while(image_ok){
 		jpg = cv::Mat(buffer);
 		image = cv::imdecode(jpg,1);
-		groundvision::whiteBalance(image);		
+		//groundvision::whiteBalance(image);		
 
 		cv::resize(image,preview,cv::Size(),SIZE_FACTOR,SIZE_FACTOR,cv::INTER_NEAREST);
 		cv::imshow("Main",preview);
@@ -123,5 +133,6 @@ int main(){
 		image_ok = src->getImage(buffer, imgps);
 	}
 	std::cout<<"Done getting Images"<<std::endl;	
+	targetlog.close();
 	return 0;
 }

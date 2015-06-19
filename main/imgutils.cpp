@@ -1,10 +1,12 @@
 #include <string>
+#include <sstream>
 #include <vector>
 #include <list>
 #include <opencv2/opencv.hpp>
+#include <iomanip>
 #include "imgutils.h"
 
-amespace groundvision{
+namespace groundvision{
 	cv::Mat channels[3];
 
 	void whiteBalance(cv::Mat& img){
@@ -43,15 +45,22 @@ amespace groundvision{
 		cv::merge(channels,3,img);
 	}
 	
-	void makeTarget(cv::Mat &image, cv::Point pnt1, cv::Point pnt2){
+	std::string makeTarget(cv::Mat &image, cv::Point pnt1, cv::Point pnt2, int &n){
 		cv::Rect targetroi = cv::Rect(pnt1.x, pnt1.y, pnt2.x-pnt1.x, pnt2.y-pnt1.y);
 		cv::Mat roiImg = image(targetroi);
 		cv::namedWindow("Target", cv::WINDOW_AUTOSIZE);
 		cv::moveWindow("Target",500,0);
 		cv::imshow("Target",roiImg);
 		cv::waitKey(0);
+		std::stringstream file;
+		std::vector<int> jpeg;
+		jpeg.push_back(CV_IMWRITE_JPEG_QUALITY);
+		jpeg.push_back(90);
+		file<<"target"<<std::setfill('0')<<std::setw(2)<<++n<<".jpg";	
+		cv::imwrite(file.str(),roiImg,jpeg);
 		cv::destroyWindow("Target");
 		readQR(roiImg);
+		return file.str();
 	}
 	
 	cv::Point map(cv::Point pnt, double size_factor){

@@ -11,7 +11,7 @@ namespace groundvision{
 
 	void whiteBalance(cv::Mat& img);
 
-	void makeTarget(cv::Mat &image, cv::Point pnt1, cv::Point pnt2);
+	std::string makeTarget(cv::Mat &image, cv::Point pnt1, cv::Point pnt2, int &n);
 	cv::Point map(cv::Point pnt, double size_factor);
 	void centroid(std::vector<cv::Point> &poly, int& xc, int&yc);	
 	void readQR(cv::Mat &roi);
